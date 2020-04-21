@@ -1,3 +1,4 @@
 rootProject.name='weatherforecast'
 include ':app'
 include ':dataproviders'
+include ':models'

@@ -2,8 +2,6 @@ package ru.gc986.models.user
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
-import ru.gc986.models.user.EducationPeriod
 import java.io.Serializable
 
 @Entity

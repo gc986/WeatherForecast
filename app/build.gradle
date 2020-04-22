@@ -18,10 +18,25 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
+            buildConfigField('String','MAINSERVER','\"https://api.openweathermap.org/\"')
+            buildConfigField('String','APPID','\"3e0d32a9d6192ffc7bc0f2b9bbbaa523\"')
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+        release {
+            buildConfigField('String','MAINSERVER','\"https://api.openweathermap.org/\"')
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
 }
@@ -36,8 +51,22 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    // rx
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+
+    // moxy
     implementation 'tech.schoolhelper:moxy-x:1.7.0'
     implementation 'tech.schoolhelper:moxy-x-androidx:1.7.0'
     implementation 'tech.schoolhelper:moxy-x-material:1.7.0'
     kapt 'tech.schoolhelper:moxy-x-compiler:1.7.0'
+
+    // dagger
+    implementation 'com.google.dagger:dagger:2.12'
+    compileOnly 'javax.annotation:jsr250-api:1.0'
+    kapt 'com.google.dagger:dagger-compiler:2.12'
+
+    implementation project(path: ':dataproviders')
+    implementation project(path: ':models')
 }

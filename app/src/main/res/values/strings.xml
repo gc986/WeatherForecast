@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">WeatherForecast</string>
     <string name="toUpdate">To update</string>
+    <string name="latitude">Latitude:</string>
+    <string name="longitude">Longitude:</string>
+    <string name="feels_like">feels like</string>
+    <string name="coordinates_are_not_defined">Coordinates are not defined</string>
+    <string name="not_enough_permissions">Not enough permissions</string>
+    <string name="repeat_the_permission_request_">Repeat the permission request?</string>
 </resources>

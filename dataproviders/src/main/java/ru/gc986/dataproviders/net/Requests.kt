@@ -11,9 +11,10 @@ interface Requests {
 
     @GET("data/2.5/weather")
     fun getWeather(
-        @Query("lat") lat: String,
-        @Query("lon") lon: String,
-        @Query("appid") appid: String)
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("appid") appid: String,
+        @Query("lang") lang: String?)
             :Single<Weather>
 
 }

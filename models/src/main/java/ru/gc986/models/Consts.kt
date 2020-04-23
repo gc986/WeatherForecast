@@ -14,4 +14,9 @@ class Consts {
         const val ONE_SEC_IN_MILLISECONDS = 60000L
     }
 
+    enum class Locals(val system:String, val short: String){
+        EN("[en_US]","en"),
+        RU("[ru_RU]","ru")
+    }
+
 }

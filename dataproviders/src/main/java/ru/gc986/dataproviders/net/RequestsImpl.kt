@@ -13,10 +13,11 @@ class RequestsImpl(context: Context, showDebugInfo: Boolean) : BaseRequest(conte
     RequestsI {
 
     override fun getWeather(
-        lat: String,
-        lon: String,
-        appid: String): Single<Weather> =
-        bnc.getWeather(lat, lon, appid)
+        lat: Double,
+        lon: Double,
+        appid: String,
+        lang: String?): Single<Weather> =
+        bnc.getWeather(lat, lon, appid, lang)
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
 

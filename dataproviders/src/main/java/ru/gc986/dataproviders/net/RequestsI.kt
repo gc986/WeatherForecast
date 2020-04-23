@@ -8,9 +8,10 @@ import ru.gc986.models.weather.Weather
 interface RequestsI {
 
     fun getWeather(
-        lat: String,
-        lon: String,
-        appid: String)
+        lat: Double,
+        lon: Double,
+        appid: String,
+        lang: String?)
             : Single<Weather>
 
 }

@@ -1,2 +1,7 @@
 rootProject.name='weatherforecast'
 include ':app'
+include ':dataproviders'
+include ':models'
+include ':styles'
+include ':commontools'
+include ':dialogs'

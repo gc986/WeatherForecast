@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Прогноз погоды</string>
+    <string name="toUpdate">Обновить</string>
+    <string name="latitude">Широта:</string>
+    <string name="longitude">Долгота:</string>
+    <string name="feels_like">ощущается как</string>
+    <string name="coordinates_are_not_defined">Координаты не определены</string>
+    <string name="not_enough_permissions">Для работы приложения не хватает разрешений</string>
+    <string name="repeat_the_permission_request_">Повторить запрос разрешений?</string>
+</resources>

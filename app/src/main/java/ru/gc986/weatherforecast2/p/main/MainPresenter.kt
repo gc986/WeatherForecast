@@ -23,7 +23,9 @@ class MainPresenter: MvpPresenter<MainViewI>() {
     }
 
     fun getWeather(longitude: Double, latitude: Double){
-        dataCenter.getNetProvider().getWeather(latitude, longitude, BuildConfig.APPID, getLocal())
+        dataCenter.getNetProvider().getWeather(latitude, longitude, BuildConfig.APPID, getLocal()).toObservable()
+            .doOnNext { it.time = System.currentTimeMillis() }
+            .flatMap { dataCenter.getDB().insertWeather(it).toObservable() }
             .doOnSubscribe { viewState.weatherUpdatesInProgress() }
             .doFinally { viewState.weatherUpdatesStopProgress() }
             .subscribe({

@@ -31,4 +31,23 @@ class Dialogs {
         ad.show()
     }
 
+    fun showTextDialog(
+        context: Context,
+        title: String,
+        description: String? = null,
+        answer: () -> Unit
+    ) {
+        val ad: AlertDialog.Builder = AlertDialog.Builder(context)
+        ad.setTitle(title)
+
+        description?.let { ad.setMessage(it) }
+
+        ad.setPositiveButton(context.resources.getText(R.string.ok)) { dialog, arg1 ->
+            answer()
+        }
+        ad.setCancelable(false)
+
+        ad.show()
+    }
+
 }

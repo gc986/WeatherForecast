@@ -13,7 +13,6 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.squareup.picasso.Picasso
-import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_weather_info.*
 import ru.gc986.commontools.Temperature
@@ -21,6 +20,8 @@ import ru.gc986.dialogs.Dialogs
 import ru.gc986.models.weather.Weather
 import ru.gc986.weatherforecast2.p.main.MainPresenter
 import ru.gc986.weatherforecast2.p.main.MainViewI
+import ru.gc986.weatherforecast2.v.common.CheckPermissions
+import ru.gc986.weatherforecast2.v.common.CheckedPlayServices
 
 
 class MainActivity : MvpAppCompatActivity(), MainViewI {
@@ -36,36 +37,32 @@ class MainActivity : MvpAppCompatActivity(), MainViewI {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        checkPermissions {
-            getLocation()
-        }
+
+        CheckedPlayServices(this).toCheckPlayServices({
+            checkPermissions {
+                getLocation()
+            }
+        }, { message ->
+            Dialogs().showTextDialog(
+                context = this,
+                title = getString(R.string.app_can_t_continue_working),
+                description = message,
+                answer = { closeApp() })
+        })
+
+    }
+
+    private fun closeApp() {
+        finish()
     }
 
     private fun checkPermissions(onCompleted: () -> Unit) {
-        RxPermissions(this)
-            .request(Manifest.permission.ACCESS_COARSE_LOCATION)
-            .subscribe({
-                if (it)
-                    onCompleted.invoke()
-                else {
-                    Dialogs().showSimpleQuest(
-                        context = this,
-                        title = getString(R.string.not_enough_permissions),
-                        description = getString(R.string.repeat_the_permission_request_),
-                        isCancelable = false
-                    ) {
-                        if (it)
-                            checkPermissions(onCompleted)
-                        else
-                            finish()
-                    }
-                }
-            }, {
-                it.message?.let {
-                    showMessage(it)
-                }
-                it.printStackTrace()
-            })
+        CheckPermissions(this)
+            .toCheckPermissions(
+                onCompleted,
+                { closeApp() },
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
     }
 
     private fun getLocation() {

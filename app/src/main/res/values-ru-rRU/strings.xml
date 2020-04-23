@@ -8,4 +8,8 @@
     <string name="coordinates_are_not_defined">Координаты не определены</string>
     <string name="not_enough_permissions">Для работы приложения не хватает разрешений</string>
     <string name="repeat_the_permission_request_">Повторить запрос разрешений?</string>
+    <string name="you_have_an_old_version_of_google_play_services_installed">У вас установлена старая версия GooglePlayServices</string>
+    <string name="app_can_t_continue_working">Приложение не может продолжать свою работу работу</string>
+    <string name="you_dont_have_google_play_services_installed">У вас не установлены GooglePlayServices</string>
+
 </resources>

@@ -7,4 +7,8 @@
     <string name="coordinates_are_not_defined">Coordinates are not defined</string>
     <string name="not_enough_permissions">Not enough permissions</string>
     <string name="repeat_the_permission_request_">Repeat the permission request?</string>
+    <string name="you_have_an_old_version_of_google_play_services_installed">You have an old version of GooglePlayServices installed</string>
+    <string name="app_can_t_continue_working">App can\'t continue working</string>
+    <string name="you_dont_have_google_play_services_installed">You don\'t have GooglePlayServices installed</string>
+
 </resources>

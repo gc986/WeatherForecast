@@ -1,16 +1,13 @@
 package ru.gc986.dataproviders.db
 
 import io.reactivex.Observable
-import ru.gc986.models.user.User
+import io.reactivex.Single
+import ru.gc986.models.weather.Weather
 
 interface DBI {
 
-    fun insertAllUsers(users: List<User>): Observable<List<User>>
+    fun insertWeather(users: Weather): Single<Weather>
 
-    fun deleteAllUsers(): Observable<Int>
-
-    fun getAllUsers(): Observable<List<User>>
-
-    fun searchUser(userPattern: String): Observable<List<User>>
+    fun getAllWeathers(): Single<List<Weather>>
 
 }

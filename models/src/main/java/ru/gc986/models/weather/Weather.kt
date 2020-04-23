@@ -1,6 +1,11 @@
 package ru.gc986.models.weather
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
 data class Weather(
+    @PrimaryKey(autoGenerate = true)
     val innerId: Long,
     val base: String,
     val cod: Int,
@@ -12,5 +17,5 @@ data class Weather(
     val timezone: Int,
     val visibility: Int,
     val weather: List<WeatherX>,
-    val time: Long
+    var time: Long
 )

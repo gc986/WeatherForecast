@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import ru.gc986.dataproviders.db.converters.Converters
 import ru.gc986.models.weather.Weather
 
-@Database(entities = [Weather::class], version = 2)
+@Database(entities = [Weather::class], version = 3)
 @TypeConverters(Converters::class)
 abstract class AppDB: RoomDatabase() {
 

@@ -17,5 +17,6 @@ data class Weather(
     val timezone: Int,
     val visibility: Int,
     val weather: List<WeatherX>,
-    var time: Long
+    var time: Long,
+    val wind: Wind
 )

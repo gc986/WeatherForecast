@@ -11,5 +11,6 @@
     <string name="app_can_t_continue_working">App can\'t continue working</string>
     <string name="you_dont_have_google_play_services_installed">You don\'t have GooglePlayServices installed</string>
     <string name="previous_weather_data">Previous weather data</string>
+    <string name="wind_">Wind %s m/s (%s°)</string>
 
 </resources>

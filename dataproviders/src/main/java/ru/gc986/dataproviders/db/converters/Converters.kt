@@ -7,6 +7,7 @@ import ru.gc986.models.Consts.Companion.SEPARATOR
 import ru.gc986.models.weather.Coord
 import ru.gc986.models.weather.Main
 import ru.gc986.models.weather.WeatherX
+import ru.gc986.models.weather.Wind
 
 class Converters {
 
@@ -17,6 +18,17 @@ class Converters {
     @TypeConverter
     fun toCoord(data: String): Coord =
         Coord(
+            data.split(SEPARATOR)[0].toDouble(),
+            data.split(SEPARATOR)[1].toDouble()
+        )
+
+    @TypeConverter
+    fun fromWind(wind: Wind): String =
+        "${wind.speed}$SEPARATOR${wind.deg}"
+
+    @TypeConverter
+    fun toWind(data: String): Wind =
+        Wind(
             data.split(SEPARATOR)[0].toDouble(),
             data.split(SEPARATOR)[1].toDouble()
         )

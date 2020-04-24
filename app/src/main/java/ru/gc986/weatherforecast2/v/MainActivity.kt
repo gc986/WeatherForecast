@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.view_weather_info.*
 import ru.gc986.commontools.Temperature
 import ru.gc986.dialogs.Dialogs
 import ru.gc986.models.Consts.Companion.TEN_MINUTES
-import ru.gc986.models.weather.Weather
 import ru.gc986.models.weather.WeatherFull
 import ru.gc986.weatherforecast2.p.main.MainPresenter
 import ru.gc986.weatherforecast2.p.main.MainViewI
@@ -140,19 +139,20 @@ class MainActivity : MvpAppCompatActivity(), MainViewI {
         menuUpdate?.stop()
     }
 
-    override fun onNewWeather(weatherFull: WeatherFull) {
-        tvLocation.text = weatherFull.weather.name
-        tvLalitude.text = weatherFull.weather.coord.lat.toString()
-        tvLongitude.text = weatherFull.weather.coord.lon.toString()
-        val celsius = Temperature.kelvinsToCelsius(weatherFull.weather.main.temp)
-        val celsiusFeelsLike = Temperature.kelvinsToCelsius(weatherFull.weather.main.feels_like)
+    override fun onNewWeather(weather: WeatherFull) {
+        tvLocation.text = weather.weather.name
+        tvLalitude.text = weather.weather.coord.lat.toString()
+        tvLongitude.text = weather.weather.coord.lon.toString()
+        val celsius = Temperature.kelvinsToCelsius(weather.weather.main.temp)
+        val celsiusFeelsLike = Temperature.kelvinsToCelsius(weather.weather.main.feels_like)
         val temp = "$celsius (${getString(R.string.feels_like)} $celsiusFeelsLike)"
+        tvWinter.text = makeWindText(weather)
         tvTemperature.text = temp
         tvDate.visibility = View.GONE
 
         Picasso.with(this).cancelRequest(ivIcoWeather)
         Picasso.with(this)
-            .load(weatherFull.iconPath)
+            .load(weather.iconPath)
             .noPlaceholder()
             .error(android.R.drawable.ic_menu_gallery)
             .into(ivIcoWeather)
@@ -161,8 +161,10 @@ class MainActivity : MvpAppCompatActivity(), MainViewI {
         if (currentWeather!=null && rvList.adapter!=null)
             (rvList.adapter as WeatherAdapter).addWeather(currentWeather!!)
 
-        currentWeather = weatherFull
+        currentWeather = weather
     }
+
+    private fun makeWindText(weather: WeatherFull): String = getString(R.string.wind_, weather.weather.wind.speed.toString(), weather.weather.wind.deg.toString())
 
     override fun showWeathers(weathers: ArrayList<WeatherFull>) {
         tvPreviousWeathers.visibility = View.VISIBLE

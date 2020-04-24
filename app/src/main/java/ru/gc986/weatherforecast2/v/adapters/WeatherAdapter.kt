@@ -41,6 +41,7 @@ class WeatherAdapter(val context: Context,
         val celsius = Temperature.kelvinsToCelsius(weather.weather.main.temp)
         val celsiusFeelsLike = Temperature.kelvinsToCelsius(weather.weather.main.feels_like)
         val temp = "$celsius (${getString(R.string.feels_like)} $celsiusFeelsLike)"
+        holder.tvWinter.text = makeWindText(weather)
         holder.tvTemperature.text = temp
 
         Picasso.with(context).cancelRequest(holder.ivIcoWeather)
@@ -55,6 +56,8 @@ class WeatherAdapter(val context: Context,
 
     private fun getString(@StringRes resId: Int) = context.getString(resId)
 
+    private fun makeWindText(weather: WeatherFull): String = context.getString(R.string.wind_, weather.weather.wind.speed.toString(), weather.weather.wind.deg.toString())
+
     inner class ViewHolder internal constructor(view: View) : RecyclerView.ViewHolder(view) {
         internal val tvDate: TextView = view.findViewById(R.id.tvDate)
         internal val tvLocation: TextView = view.findViewById(R.id.tvLocation)
@@ -62,6 +65,7 @@ class WeatherAdapter(val context: Context,
         internal val tvLongitude: TextView = view.findViewById(R.id.tvLongitude)
         internal val ivIcoWeather: ImageView = view.findViewById(R.id.ivIcoWeather)
         internal val tvTemperature: TextView = view.findViewById(R.id.tvTemperature)
+        internal val tvWinter: TextView = view.findViewById(R.id.tvWinter)
     }
 
 }

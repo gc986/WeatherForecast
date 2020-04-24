@@ -105,6 +105,7 @@ class MainActivity : MvpAppCompatActivity(), MainViewI {
                     menuUpdate = icon
 
                 checkPermissions {
+                    handlerTimer.reset()
                     getCurrentWeather()
                 }
 

@@ -2,7 +2,6 @@
 Weather forecast for your place
 
 <br>
-<br>
 mvp
 <br>
 rxjava2
@@ -18,3 +17,5 @@ retrofit2
 room
 <br>
 androidx
+<br>
+GooglePlayServices (to determine location)

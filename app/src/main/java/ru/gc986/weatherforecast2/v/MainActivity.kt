@@ -17,11 +17,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_weather_info.*
 import ru.gc986.commontools.Temperature
 import ru.gc986.dialogs.Dialogs
+import ru.gc986.models.Consts.Companion.TEN_MINUTES
 import ru.gc986.models.weather.Weather
 import ru.gc986.weatherforecast2.p.main.MainPresenter
 import ru.gc986.weatherforecast2.p.main.MainViewI
 import ru.gc986.weatherforecast2.v.common.CheckPermissions
 import ru.gc986.weatherforecast2.v.common.CheckedPlayServices
+import ru.gc986.weatherforecast2.v.common.HandlerTimer
 
 
 class MainActivity : MvpAppCompatActivity(), MainViewI {
@@ -32,6 +34,7 @@ class MainActivity : MvpAppCompatActivity(), MainViewI {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     var userLongitude: Double? = null
     var userLatitude: Double? = null
+    val handlerTimer = HandlerTimer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +44,10 @@ class MainActivity : MvpAppCompatActivity(), MainViewI {
         CheckedPlayServices(this).toCheckPlayServices({
             checkPermissions {
                 getLocation()
+                // create timer
+                handlerTimer.start(TEN_MINUTES){
+                    getCurrentWeather()
+                }
             }
         }, { message ->
             Dialogs().showTextDialog(
@@ -50,6 +57,16 @@ class MainActivity : MvpAppCompatActivity(), MainViewI {
                 answer = { closeApp() })
         })
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        handlerTimer.reset()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        handlerTimer.stop()
     }
 
     private fun closeApp() {

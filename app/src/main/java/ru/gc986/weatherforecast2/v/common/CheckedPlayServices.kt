@@ -9,7 +9,7 @@ import ru.gc986.weatherforecast.R
 
 class CheckedPlayServices(val context: Context) {
 
-    val MIN_VER_OF_G_PLAY_SERVICES = 1104L
+    private val MIN_VER_OF_G_PLAY_SERVICES = 1104L
 
     fun toCheckPlayServices(
         onCompleted: () -> Unit,

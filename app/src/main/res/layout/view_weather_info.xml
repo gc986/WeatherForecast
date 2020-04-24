@@ -3,9 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_70sdp"
+    android:layout_height="@dimen/_80sdp"
     android:layout_margin="@dimen/_5sdp"
     android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        tools:text="25:14 25/4/2020"/>
 
     <TextView
         android:id="@+id/tvLocation"
@@ -63,6 +73,7 @@
         tools:src="@mipmap/ic_launcher" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_20sdp"
         app:layout_constraintTop_toBottomOf="@+id/llPosition">

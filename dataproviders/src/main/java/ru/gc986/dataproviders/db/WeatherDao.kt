@@ -12,7 +12,7 @@ interface WeatherDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(users: Weather)
 
-    @Query("SELECT * FROM Weather")
+    @Query("SELECT * FROM Weather ORDER BY innerId DESC")
     fun getAll(): List<Weather>
 
 }

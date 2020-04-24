@@ -22,7 +22,22 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_5sdp"
         android:visibility="gone"
-        tools:visibility="visible"
-        />
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tvPreviousWeathers"
+        style="@style/h2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/common_google_signin_btn_text_light_disabled"
+        android:padding="@dimen/_10sdp"
+        android:text="@string/previous_weather_data" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvList"
+        android:padding="@dimen/_10sdp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/view_weather_info"/>
 
 </LinearLayout>

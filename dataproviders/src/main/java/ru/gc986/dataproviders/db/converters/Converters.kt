@@ -18,7 +18,7 @@ class Converters {
     fun toCoord(data: String): Coord =
         Coord(
             data.split(SEPARATOR)[0].toDouble(),
-            data.split(",")[1].toDouble()
+            data.split(SEPARATOR)[1].toDouble()
         )
 
     @TypeConverter

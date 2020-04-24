@@ -6,6 +6,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import ru.gc986.models.Consts
 import ru.gc986.models.weather.Weather
+import ru.gc986.models.weather.WeatherFull
 import ru.gc986.simplenotebook.m.DataCenterI
 import ru.gc986.weatherforecast.BuildConfig
 import ru.gc986.weatherforecast2.WeatherForecastApp
@@ -22,6 +23,23 @@ class MainPresenter: MvpPresenter<MainViewI>() {
         diData.inject(this)
     }
 
+    fun getWeathers(){
+        dataCenter.getDB().getAllWeathers()
+            .doOnSubscribe { viewState.weatherUpdatesInProgress() }
+            .doFinally { viewState.weatherUpdatesStopProgress() }
+            .map {
+                val out = ArrayList<WeatherFull>()
+                it.forEach { weather -> out.add(WeatherFull(weather, getPathOfWeatherIcon(weather))) }
+                out
+            }
+            .subscribe({
+                viewState.showWeathers(it)
+            },{
+                viewState.showMessage(it.message.toString())
+                it.printStackTrace()
+            }).addToUnsubcribe()
+    }
+
     fun getWeather(longitude: Double, latitude: Double){
         dataCenter.getNetProvider().getWeather(latitude, longitude, BuildConfig.APPID, getLocal()).toObservable()
             .doOnNext { it.time = System.currentTimeMillis() }
@@ -29,8 +47,9 @@ class MainPresenter: MvpPresenter<MainViewI>() {
             .doOnSubscribe { viewState.weatherUpdatesInProgress() }
             .doFinally { viewState.weatherUpdatesStopProgress() }
             .subscribe({
-                viewState.onNewWeather(it, getPathOfWeatherIcon(it))
+                viewState.onNewWeather(WeatherFull(it, getPathOfWeatherIcon(it)))
             },{
+                viewState.showMessage(it.message.toString())
                 it.printStackTrace()
             })
             .addToUnsubcribe()

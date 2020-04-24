@@ -11,5 +11,6 @@
     <string name="you_have_an_old_version_of_google_play_services_installed">У вас установлена старая версия GooglePlayServices</string>
     <string name="app_can_t_continue_working">Приложение не может продолжать свою работу работу</string>
     <string name="you_dont_have_google_play_services_installed">У вас не установлены GooglePlayServices</string>
+    <string name="previous_weather_data">Предыдущие погодные данные</string>
 
 </resources>

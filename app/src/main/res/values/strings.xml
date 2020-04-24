@@ -10,5 +10,6 @@
     <string name="you_have_an_old_version_of_google_play_services_installed">You have an old version of GooglePlayServices installed</string>
     <string name="app_can_t_continue_working">App can\'t continue working</string>
     <string name="you_dont_have_google_play_services_installed">You don\'t have GooglePlayServices installed</string>
+    <string name="previous_weather_data">Previous weather data</string>
 
 </resources>

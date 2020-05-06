@@ -4,13 +4,14 @@ import android.Manifest
 import android.graphics.drawable.Animatable
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.arellomobile.mvp.MvpAppCompatActivity
-import com.arellomobile.mvp.presenter.InjectPresenter
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.squareup.picasso.Picasso
@@ -20,37 +21,61 @@ import ru.gc986.commontools.Temperature
 import ru.gc986.dialogs.Dialogs
 import ru.gc986.models.Consts.Companion.TEN_MINUTES
 import ru.gc986.models.weather.WeatherFull
-import ru.gc986.weatherforecast2.p.main.MainPresenter
-import ru.gc986.weatherforecast2.p.main.MainViewI
 import ru.gc986.weatherforecast2.v.adapters.WeatherAdapter
-import ru.gc986.weatherforecast2.v.common.CheckPermissions
-import ru.gc986.weatherforecast2.v.common.CheckedPlayServices
-import ru.gc986.weatherforecast2.v.common.HandlerTimer
+import ru.gc986.weatherforecast2.v.common.*
+import ru.gc986.weatherforecast2.vm.main.MainViewModel
+import java.text.SimpleDateFormat
 
 
-class MainActivity : MvpAppCompatActivity(), MainViewI {
+class MainActivity : AppCompatActivity(), LifecycleObserver {
 
-    @InjectPresenter
-    lateinit var presenter: MainPresenter
     var menuUpdate: Animatable? = null
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
     var userLongitude: Double? = null
     var userLatitude: Double? = null
     private val handlerTimer = HandlerTimer()
     private var currentWeather: WeatherFull? = null
+    private lateinit var viewModel: MainViewModel
+    private val dateFormat = SimpleDateFormat("ss:mm:HH dd.MM.yyyy")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        presenter.getWeathers()
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        toSubscribe()
+        viewModel.getWeathers()
 
+        menuUpdate?.start()
+
+        lifecycle.addObserver(this)
+        performingNecessaryChecks()
+    }
+
+    private fun toSubscribe() {
+        viewModel.newWeather.observe(this, Observer {
+            onNewWeather(it)
+        })
+        viewModel.weathers.observe(this, Observer {
+            showWeathers(ArrayList(it))
+        })
+        viewModel.inProgress.observe(this, Observer {
+            if (it)
+                menuUpdate?.start()
+            else
+                menuUpdate?.stop()
+        })
+        viewModel.onErrMessage.observe(this, Observer {
+            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+        })
+    }
+
+    private fun performingNecessaryChecks() {
         CheckedPlayServices(this).toCheckPlayServices({
             checkPermissions {
                 getLocation()
                 // create timer
-                handlerTimer.start(TEN_MINUTES){
+                handlerTimer.start(TEN_MINUTES) {
                     getCurrentWeather()
                 }
             }
@@ -61,16 +86,15 @@ class MainActivity : MvpAppCompatActivity(), MainViewI {
                 description = message,
                 answer = { closeApp() })
         })
-
     }
 
-    override fun onResume() {
-        super.onResume()
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun resumeTimer() {
         handlerTimer.reset()
     }
 
-    override fun onPause() {
-        super.onPause()
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun stopTimer() {
         handlerTimer.stop()
     }
 
@@ -79,22 +103,23 @@ class MainActivity : MvpAppCompatActivity(), MainViewI {
     }
 
     private fun checkPermissions(onCompleted: () -> Unit) {
-        CheckPermissions(this)
-            .toCheckPermissions(
+        val checkPermissions = CheckPermissions(this)
+        checkPermissions.toCheckPermissions(
                 onCompleted,
                 { closeApp() },
                 Manifest.permission.ACCESS_COARSE_LOCATION
             )
+        lifecycle.addObserver(checkPermissions)
     }
 
     private fun getLocation() {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                userLongitude = location?.longitude
-                userLatitude = location?.latitude
-                getCurrentWeather()
-            }
+        val lm = LocationManager()
+        lm.location.observe(this, Observer {location ->
+            userLongitude = location.longitude
+            userLatitude = location.latitude
+            getCurrentWeather()
+        })
+        lm.getLocation(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -122,24 +147,16 @@ class MainActivity : MvpAppCompatActivity(), MainViewI {
 
     private fun getCurrentWeather() {
         if (userLatitude != null && userLongitude != null)
-            presenter.getWeather(userLongitude!!, userLatitude!!)
+            viewModel.getWeather(userLongitude!!, userLatitude!!)
         else
             showMessage(getString(R.string.coordinates_are_not_defined))
     }
 
-    override fun showMessage(message: String) {
+    private fun showMessage(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
-    override fun weatherUpdatesInProgress() {
-        menuUpdate?.start()
-    }
-
-    override fun weatherUpdatesStopProgress() {
-        menuUpdate?.stop()
-    }
-
-    override fun onNewWeather(weather: WeatherFull) {
+    private fun onNewWeather(weather: WeatherFull) {
         tvLocation.text = weather.weather.name
         tvLalitude.text = weather.weather.coord.lat.toString()
         tvLongitude.text = weather.weather.coord.lon.toString()
@@ -148,7 +165,7 @@ class MainActivity : MvpAppCompatActivity(), MainViewI {
         val temp = "$celsius (${getString(R.string.feels_like)} $celsiusFeelsLike)"
         tvWinter.text = makeWindText(weather)
         tvTemperature.text = temp
-        tvDate.visibility = View.GONE
+        tvDate.text = dateFormat.format(weather.weather.time)
 
         Picasso.with(this).cancelRequest(ivIcoWeather)
         Picasso.with(this)
@@ -158,15 +175,19 @@ class MainActivity : MvpAppCompatActivity(), MainViewI {
             .into(ivIcoWeather)
 
         incLastWeather.visibility = View.VISIBLE
-        if (currentWeather!=null && rvList.adapter!=null)
+        if (currentWeather != null && rvList.adapter != null)
             (rvList.adapter as WeatherAdapter).addWeather(currentWeather!!)
 
         currentWeather = weather
     }
 
-    private fun makeWindText(weather: WeatherFull): String = getString(R.string.wind_, weather.weather.wind.speed.toString(), weather.weather.wind.deg.toString())
+    private fun makeWindText(weather: WeatherFull): String = getString(
+        R.string.wind_,
+        weather.weather.wind.speed.toString(),
+        weather.weather.wind.deg.toString()
+    )
 
-    override fun showWeathers(weathers: ArrayList<WeatherFull>) {
+    private fun showWeathers(weathers: ArrayList<WeatherFull>) {
         tvPreviousWeathers.visibility = View.VISIBLE
         rvList.layoutManager = LinearLayoutManager(this)
         rvList.adapter = WeatherAdapter(this, weathers)

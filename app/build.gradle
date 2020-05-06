@@ -39,6 +39,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    dataBinding {
+        enabled = true
+    }
+
 }
 
 dependencies {
@@ -52,6 +56,11 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    // MVVM
+    implementation "android.arch.lifecycle:runtime:1.1.1"
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    kapt "android.arch.lifecycle:compiler:1.1.1"
+
     // Play services
     implementation 'com.google.android.gms:play-services-location:17.0.0'
 
@@ -59,12 +68,6 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxkotlin:2.1.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
-
-    // moxy
-    implementation 'tech.schoolhelper:moxy-x:1.7.0'
-    implementation 'tech.schoolhelper:moxy-x-androidx:1.7.0'
-    implementation 'tech.schoolhelper:moxy-x-material:1.7.0'
-    kapt 'tech.schoolhelper:moxy-x-compiler:1.7.0'
 
     // dagger
     implementation 'com.google.dagger:dagger:2.12'
@@ -78,6 +81,9 @@ dependencies {
     // picasso
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
+
+    // Log
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 
     implementation project(path: ':dataproviders')
     implementation project(path: ':models')

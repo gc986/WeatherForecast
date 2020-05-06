@@ -1,7 +1,8 @@
-package ru.gc986.weatherforecast2.p.main
+package ru.gc986.weatherforecast2.vm.main
 
-import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
+import androidx.databinding.ObservableField
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import ru.gc986.models.Consts
@@ -13,11 +14,15 @@ import ru.gc986.weatherforecast2.WeatherForecastApp
 import ru.gc986.weatherforecast2.WeatherForecastApp.Companion.diData
 import javax.inject.Inject
 
-@InjectViewState
-class MainPresenter: MvpPresenter<MainViewI>() {
+class MainViewModel: ViewModel() {
 
     @Inject lateinit var dataCenter: DataCenterI
     private val unsubscribe = CompositeDisposable()
+
+    val inProgress = MutableLiveData<Boolean>()
+    val onErrMessage = MutableLiveData<String>()
+    val weathers = MutableLiveData<List<WeatherFull>>()
+    val newWeather = MutableLiveData<WeatherFull>()
 
     init {
         diData.inject(this)
@@ -25,17 +30,17 @@ class MainPresenter: MvpPresenter<MainViewI>() {
 
     fun getWeathers(){
         dataCenter.getDB().getAllWeathers()
-            .doOnSubscribe { viewState.weatherUpdatesInProgress() }
-            .doFinally { viewState.weatherUpdatesStopProgress() }
+            .doOnSubscribe { inProgress.value = true }
+            .doFinally { inProgress.value = false }
             .map {
                 val out = ArrayList<WeatherFull>()
                 it.forEach { weather -> out.add(WeatherFull(weather, getPathOfWeatherIcon(weather))) }
                 out
             }
             .subscribe({
-                viewState.showWeathers(it)
+                weathers.value = it
             },{
-                viewState.showMessage(it.message.toString())
+                onErrMessage.value = it.message.toString()
                 it.printStackTrace()
             }).addToUnsubcribe()
     }
@@ -44,12 +49,12 @@ class MainPresenter: MvpPresenter<MainViewI>() {
         dataCenter.getNetProvider().getWeather(latitude, longitude, BuildConfig.APPID, getLocal()).toObservable()
             .doOnNext { it.time = System.currentTimeMillis() }
             .flatMap { dataCenter.getDB().insertWeather(it).toObservable() }
-            .doOnSubscribe { viewState.weatherUpdatesInProgress() }
-            .doFinally { viewState.weatherUpdatesStopProgress() }
+            .doOnSubscribe { inProgress.value = true }
+            .doFinally { inProgress.value = false }
             .subscribe({
-                viewState.onNewWeather(WeatherFull(it, getPathOfWeatherIcon(it)))
+                newWeather.value = WeatherFull(it, getPathOfWeatherIcon(it))
             },{
-                viewState.showMessage(it.message.toString())
+                onErrMessage.value = it.message.toString()
                 it.printStackTrace()
             })
             .addToUnsubcribe()
@@ -68,8 +73,8 @@ class MainPresenter: MvpPresenter<MainViewI>() {
         return null
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onCleared() {
+        super.onCleared()
         unsubscribe.dispose()
     }
 
